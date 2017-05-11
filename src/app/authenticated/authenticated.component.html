@@ -1,11 +1,9 @@
 <style>
-
-img.center {
-  display: block;
-  margin-left: auto;
-  margin-right: auto;
+img.qrcode {
+        display: block;
+        margin-left: auto;
+        margin-right: auto;
 }
-
 </style>
 
 <div mdl-shadow="3"
@@ -19,22 +17,52 @@ img.center {
             "
      >
   <div class="mdl-card__content mdl-card--expand">
-    <br>
-    <img class="center" src="src/app/sphere/favicon.ico">
-    <br>
-    <br>
-    <br>
-    <br>
-    <div style="text-align:center;">
-      <em>
-        <h5>Authenticated Content</h5>
-      </em>
+    <div *ngIf="qrtext">
+      <img class="qrcode" src="{{url}}{{qrtext}}&size=300">
     </div>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
+    <div *ngIf="!qrtext">
+      <img class="qrcode" src="src/app/sphere/favicon.ico">
+    </div>
+
+    <form #subscriptionForm="ngForm">
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label mdl-cell mdl-cell--12-col">
+        <textarea
+           class="mdl-textfield__input"
+           [(ngModel)]="text"
+           type="text"
+           rows= "4"
+           pattern="[ a-zA-Z0-9!@#$%^&*()-_=+:;<>,.?/]+" name="text">
+        </textarea>
+        <label class="mdl-textfield__label" for="text">Encode this text</label>
+        <span class="mdl-textfield__error">Input is empty</span>
+      </div>
+      <button mdl-button
+              type="submit"
+              mdl-button-type="raised"
+              mdl-ripple
+              mdl-colored="primary"
+              (click)="encode(text)"
+              float-center
+              class="mdl-cell mdl-cell--12-col"
+              >
+        QREncode
+      </button>
+      <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect mdl-cell mdl-cell--12-col" for="switch-1">
+        <input type="checkbox" [(ngModel)]="userInfo" name="userInfo" id="switch-1" class="mdl-switch__input" checked>
+        <span class="mdl-switch__label">Include login user/email</span>
+      </label>
+    </form>
+    <div class="mdl-cell mdl-cell--6-col">
+      <img class="avatar" src="{{image}}">
+      <ul style="list-style-type: none; margin: 0; padding: 0; display: inline-block; float:right;" >
+        <li>
+          {{name}}
+        </li>
+        <li>
+          {{email}}
+        </li>
+      </ul>
+    </div>
   </div>
 </div>
+

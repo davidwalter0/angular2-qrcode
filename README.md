@@ -1,13 +1,14 @@
 ---
 ## Screen captures of example
 
-Unauthenticated application
+Toggle include user info to include the user's login name and email
+from authentication application.
 
-![Phone Unauthenticated](images/unauth.png)
+![Phone Logged in No Qr Image](images/phone.png)
 
-Authenticated application.
+Example qr code generated
 
-![Phone Authenticated](images/auth.png)
+![Phone Qr Encode URL and some text](images/phone-qrcode.png)
 
 --- 
 *Authenticated vs Unauthenticated*
@@ -16,49 +17,44 @@ Basic config of the base app on connect unauthenticated empty page is
 presented. Once authenticated the application authenticated component
 is activated.
 
+Connect to qr code generator, allow multiple lines of input
+
+Testing with golang qrcode service. The initial tests were standalone
+instances on a dev system.
+
+---
+## Run the app
+
+---
+*Connect to a qr generator*
+
+
+Calls a running qr generator
+
+The one this has been tested with can be configured briefly like the following
 
 ```
-    git clone github.com/davidwalter0/angular2-auth-base
-    cd angular2-auth-base
+go get github.com/davidwalter0/go-qr-generator
+
+export QRCODE_GENERATOR_HOST=bind-ip
+export QRCODE_GENERATOR_PORT=port
+go run go-qr-generator
+
+```
+
+Edit ../../environments/environment.ts and set the environment variables
+to match the config option for the qr code backend
+
+```
+    export const environment = {
+        production: false,
+        QRCODE_GENERATOR_HOST: "192.168.0.3",
+        QRCODE_GENERATOR_PORT: "8081",
+    };
+```
+
+Then run the angular application via ng
+
+```
     ng serve 
 ```
-
----
----
-
-*Miscellany*
-
-- The facebook config implementation wasn't tested
-- Exported firebase configuration to firebase.credentials.ts and
-  renamed firebaseConfigCredentials
-- Add firebase.credentials.ts.empty, rename to firebase.credentials.ts
-  and update with the credentials
-- Add the firebase.credentials.ts file name to gitignore to keep
-  credentials out of git repo
-- chmod 600 firebase.credentials.ts
-
-
-```
-export const firebaseConfigCredentials = {
-  apiKey: '',
-  authDomain: '',
-  databaseURL: '',
-  storageBucket: '',
-  messagingSenderId: ''
-};
-```
-
-
-
----
-## Angular Firebase Authentication
-
-Additional information from an angular2 firebase demo
-
-![Angular Authentication Tutorial](https://s3.amazonaws.com/coursetro/posts/32-full.png)
-
-Check out a demo here: [Angular Authentication Example](https://coursetro.com/preview/angular-auth-demo/)
-
-Read (and watch) the tutorial here: [Angular Authentication Tutorial](https://coursetro.com/posts/code/32/Create-a-Full-Angular-Authentication-System-with-Firebase)
-
-Clone this repo to get up and running! Check out more [Angular Tutorials](https://coursetro.com) at our site.
