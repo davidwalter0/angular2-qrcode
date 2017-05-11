@@ -56,5 +56,8 @@ to match the config option for the qr code backend
 Then run the angular application via ng
 
 ```
+    git clone github.com/davidwalter0/angular2-qrcode
+    cd angular2-qrcode
+    npm install --save
     ng serve 
 ```

@@ -6,6 +6,6 @@
 
 export const environment = {
   production: false,
-  QRCODE_GENERATOR_HOST: "192.168.0.21",
-  QRCODE_GENERATOR_PORT: "9000",
+  QRCODE_GENERATOR_HOST: "localhost",
+  QRCODE_GENERATOR_PORT: "8081",
 };
