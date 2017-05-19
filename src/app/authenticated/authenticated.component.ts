@@ -76,6 +76,9 @@ export class AuthenticatedComponent implements OnInit {
     if (this.userInfo) {
       text = encodeURIComponent(text.replace("\r", "\n ") + "  \n\n\n" + this.name + "\n" + this.email + "\n");
     }
+    else {
+      text = encodeURIComponent(text)
+    }
     this.qrtext = text;
   }
 }
