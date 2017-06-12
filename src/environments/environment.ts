@@ -6,6 +6,10 @@
 
 export const environment = {
   production: false,
-  QRCODE_GENERATOR_HOST: "localhost",
-  QRCODE_GENERATOR_PORT: "8081",
+  // required HTTP attribute, disable TLS by turning it off
+  HTTPS: true,
+  // if using tls/https, the hostname must match certs or you'll fight
+  // with browser cert acceptance
+  QRCODE_GENERATOR_HOST: "example.com",
+  QRCODE_GENERATOR_PORT: "8443",
 };

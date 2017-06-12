@@ -39,11 +39,11 @@ export class AuthenticatedComponent implements OnInit {
 
   host: string = environment.QRCODE_GENERATOR_HOST;
   port: string = environment.QRCODE_GENERATOR_PORT;
+  https: boolean = environment.HTTPS;
+  PROTOCOL: string = "http";
   // url: string = "http://" + environment.QRCODE_GENERATOR_HOST + ":" + environment.QRCODE_GENERATOR_PORT + "/?data=";
-  url: string = `http://${this.host}:${this.port}/?data=`;
-
-  default_url: string = "http://127.0.0.1:8081/?data=";
-
+  url: string = `${this.PROTOCOL}://${this.host}:${this.port}/?data=`;
+  default_url: string = "${this.PROTOCOL}://localhost:8081/?data=";
   // url: string = "";
 
   email: string = "";
@@ -62,9 +62,20 @@ export class AuthenticatedComponent implements OnInit {
     this.email = this.authguard.email;
     this.name = this.authguard.name;
     this.image = this.authguard.image;
+    if (this.https) {
+      this.PROTOCOL = "https";
+    }
+
   }
 
   public ngOnInit() {
+    if (this.https) {
+      this.PROTOCOL = "https";
+    }
+
+    this.url = `${this.PROTOCOL}://${this.host}:${this.port}/?data=`;
+    this.default_url = "${this.PROTOCOL}://localhost:8081/?data=";
+
     if (this.host == undefined || this.port == undefined) {
       this.url = this.default_url;
     }
