@@ -6,9 +6,9 @@ from authentication application.
 
 ![Phone Logged in No Qr Image](images/phone.png)
 
-Example qr code generated
+Example 2FA Validation (fake QRCode)
 
-![Phone Qr Encode URL and some text](images/phone-qrcode.png)
+![Phone Qr 2FA Validation](images/2FA.png)
 
 --- 
 *Authenticated vs Unauthenticated*
@@ -34,11 +34,15 @@ Calls a running qr generator
 The one this has been tested with can be configured briefly like the following
 
 ```
-go get github.com/davidwalter0/go-qr-generator
-
-export QRCODE_GENERATOR_HOST=bind-ip
-export QRCODE_GENERATOR_PORT=port
-go run go-qr-generator
+    go get github.com/davidwalter0/twofactor
+    # Replace example.com with your issuer
+    # Use tls/configured service with letsencrypt certs
+    export APP_HTTPS=true
+    export APP_HOST=example.com
+    export APP_PORT=8443
+    export APP_CERT=/etc/letsencrypt/live/example.com/cert.pem
+    export APP_KEY=/etc/letsencrypt/live/example.com/privkey.pem
+    sudo -E /usr/local/go/bin/go run serve.go
 
 ```
 
@@ -56,6 +60,9 @@ to match the config option for the qr code backend
 ```
     export const environment = {
         production: false,
+        TESTING: false,
+        HTTPS: true,
+        ISSUER: "example.com",
         QRCODE_GENERATOR_HOST: "192.168.0.3",
         QRCODE_GENERATOR_PORT: "8081",
     };

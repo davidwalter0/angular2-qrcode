@@ -4,12 +4,7 @@ import { ActivatedRoute, Router, Routes } from '@angular/router';
 import { Http, Response, Headers, RequestOptions, URLSearchParams } from '@angular/http';
 import { FormGroup, FormControl, Validators, FormBuilder } from '@angular/forms';
 import 'rxjs/add/operator/filter';
-// Import RxJs required methods
 import { Subscription } from 'rxjs/Subscription';
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/catch';
-
 import { Title } from '@angular/platform-browser';
 import { MdlSnackbarService } from 'angular2-mdl';
 import { AbstractComponent } from '../abstract.component';
@@ -18,8 +13,8 @@ import { AngularFireAuth } from "angularfire2/angularfire2";
 import { AuthGuard } from '../auth.service';
 
 import { environment } from '../../environments/environment';
-
-// const emailValidator = Validators.pattern('^[a-z]+[a-z0-9._]+@[a-z]+\.[a-z.]{2,5}$');
+import { ValidationService } from './validation.service';
+import { JsonResponse } from './json.response';
 
 @Component({
   selector: 'authenticated',
@@ -29,67 +24,96 @@ import { environment } from '../../environments/environment';
   templateUrl: 'authenticated.component.html'
 })
 
-// declare var process: any;
-
-
-
-
-
 export class AuthenticatedComponent implements OnInit {
-
+  testing: boolean = environment.TESTING;
   host: string = environment.QRCODE_GENERATOR_HOST;
   port: string = environment.QRCODE_GENERATOR_PORT;
+  issuer: string = environment.ISSUER;
   https: boolean = environment.HTTPS;
-  PROTOCOL: string = "http";
-  // url: string = "http://" + environment.QRCODE_GENERATOR_HOST + ":" + environment.QRCODE_GENERATOR_PORT + "/?data=";
+
+  errorMessage: string;
+
+  btnValidatedText: string = "Validate";
+  validation_disabled: boolean = false;
+  validated: boolean = false;
+  validationURL: string = "";
+  validationResponse: JsonResponse;
+
+  token: string = ""
+  PROTOCOL: string = "https";
   url: string = `${this.PROTOCOL}://${this.host}:${this.port}/?data=`;
   default_url: string = "${this.PROTOCOL}://localhost:8081/?data=";
-  // url: string = "";
 
-  email: string = "";
+  account: string = "";
   name: string = "";
   image: string = "";
 
   text: string = "";
-  qrtext: string = "";
+  qrQuery: string = "";
   qrcode: any;
-  errorMessage: any;
+
   userInfo: boolean = true;
 
-  constructor(public authguard: AuthGuard, private http: Http) {
+  constructor(public authguard: AuthGuard,
+    private http: Http,
+    private validationService: ValidationService) {
     console.log(authguard);
-    // console.log("Url: " + this.url);
-    this.email = this.authguard.email;
-    this.name = this.authguard.name;
-    this.image = this.authguard.image;
-    if (this.https) {
-      this.PROTOCOL = "https";
+    if (this.testing) {
+      this.issuer = "example.com";
+      this.account = "uid@example.com";
+      this.name = "User Name";
+      this.image = "src/app/sphere/favicon.ico";
+    } else {
+      this.account = this.authguard.email;
+      this.name = this.authguard.name;
+      this.image = this.authguard.image;
     }
-
+    if (!this.https) {
+      this.PROTOCOL = "http";
+    }
   }
 
   public ngOnInit() {
-    if (this.https) {
-      this.PROTOCOL = "https";
+    if (!this.https) {
+      this.PROTOCOL = "http";
     }
 
-    this.url = `${this.PROTOCOL}://${this.host}:${this.port}/?data=`;
-    this.default_url = "${this.PROTOCOL}://localhost:8081/?data=";
+    this.url = `${this.PROTOCOL}://${this.host}:${this.port}`;
+    this.default_url = "${this.PROTOCOL}://localhost:8081";
 
     if (this.host == undefined || this.port == undefined) {
       this.url = this.default_url;
     }
     console.log("Url: ", this.url);
-
   }
 
-  public encode(text: string) {
-    if (this.userInfo) {
-      text = encodeURIComponent(text.replace("\r", "\n ") + "  \n\n\n" + this.name + "\n" + this.email + "\n");
+  public encode() {
+    let text: string = `${this.url}/?account=${this.account}&issuer=${this.issuer}`;
+    console.log(text)
+    this.qrQuery = text;
+  }
+
+  public success(): boolean {
+    return true;
+  }
+
+  public validating(): boolean {
+    return true;
+  }
+
+  public validate() {
+    let url: string = `${this.url}/validate/?account=${this.account}&issuer=${this.issuer}&token=${this.token}`;
+    if (this.testing) {
+      this.validationResponse = <JsonResponse>{
+        Account: "uid@example.com",
+        Issuer: "example.com",
+        Token: "123456",
+        Status: "Successfully validated code",
+      }
+    } else {
+      this.validationService.validate(url).subscribe(
+        response => this.validationResponse = response
+      );
     }
-    else {
-      text = encodeURIComponent(text)
-    }
-    this.qrtext = text;
   }
 }

@@ -17,26 +17,20 @@ img.qrcode {
             "
      >
   <div class="mdl-card__content mdl-card--expand">
-    <div *ngIf="qrtext">
-      <img class="qrcode" src="{{url}}{{qrtext}}&size=300">
+    <div *ngIf="qrQuery">
+      <img class="qrcode" src="{{qrQuery}}&size=300">
     </div>
-    <div *ngIf="!qrtext">
+    <div *ngIf="!qrQuery && !testing">
       <img class="qrcode" src="src/app/sphere/favicon.ico">
     </div>
 
+    <div *ngIf="testing">
+      <img class="qrcode" src="src/app/sphere/fake.png">
+    </div>
+
     <form #subscriptionForm="ngForm">
-      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label mdl-cell mdl-cell--12-col">
-        <textarea
-           class="mdl-textfield__input"
-           [(ngModel)]="text"
-           type="text"
-           rows= "4"
-           pattern="[ a-zA-Z0-9!@#$%^&*()-_=+:;<>,.?/]+" name="text">
-        </textarea>
-        <label class="mdl-textfield__label" for="text">Encode this text</label>
-        <span class="mdl-textfield__error">Input is empty</span>
-      </div>
       <button mdl-button
+              [disabled]="validation_disabled"
               type="submit"
               mdl-button-type="raised"
               mdl-ripple
@@ -45,12 +39,9 @@ img.qrcode {
               float-center
               class="mdl-cell mdl-cell--12-col"
               >
-        QREncode
+        2FA Code
       </button>
-      <label class="mdl-switch mdl-js-switch mdl-js-ripple-effect mdl-cell mdl-cell--12-col" for="switch-1">
-        <input type="checkbox" [(ngModel)]="userInfo" name="userInfo" id="switch-1" class="mdl-switch__input" checked>
-        <span class="mdl-switch__label">Include login user/email</span>
-      </label>
+
     </form>
     <div class="mdl-cell mdl-cell--6-col">
       <img class="avatar" src="{{image}}">
@@ -59,9 +50,52 @@ img.qrcode {
           {{name}}
         </li>
         <li>
-          {{email}}
+          {{account}}
         </li>
       </ul>
+    </div>
+    <hr>
+    <form #validationForm="ngForm" class="mdl-cell--12-col" style="width:100%">
+      <div class="mdl-row mdl-cell--12-col" style="width:100%">
+        <mdl-textfield
+           [(ngModel)]="token"
+           class="form-control"
+           floating-label
+           label="Token"
+           name="token" type="text"
+           placeholder="123456"
+           required
+           pattern="[0-9]{6}"
+           minlength=6
+           maxlength=6
+           >
+        </mdl-textfield>
+
+
+        <button
+           [disabled]="!validationForm.valid"
+           mdl-button
+           mdl-button-type="raised"
+           mdl-ripple mdl-colored="primary"
+           (click)="validate()"
+           float-right
+           name="validate"
+           >
+          {{btnValidatedText}}
+        </button>
+      </div>
+    </form>
+    <hr>
+    <div *ngIf="validationResponse">
+      <b>Validation</b>
+      <br/>Account: {{validationResponse.Account}}
+      <br/>Issuer: {{validationResponse.Issuer}}
+      <br/>Token: {{validationResponse.Token}}
+      <br/>Status: {{validationResponse.Status}}
+    </div>
+
+    <div *ngIf="errorMessage">
+      <em>Error {{errorMessage}}</em>
     </div>
   </div>
 </div>
