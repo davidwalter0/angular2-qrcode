@@ -28,21 +28,39 @@ img.qrcode {
       <img class="qrcode" src="src/app/sphere/fake.png">
     </div>
 
-    <form #subscriptionForm="ngForm">
-      <button mdl-button
-              [disabled]="validation_disabled"
-              type="submit"
-              mdl-button-type="raised"
-              mdl-ripple
-              mdl-colored="primary"
-              (click)="encode(text)"
-              float-center
-              class="mdl-cell mdl-cell--12-col"
-              >
-        2FA Code
-      </button>
+    <button mdl-button
+            type="submit"
+            mdl-button-type="raised"
+            mdl-ripple
+            mdl-colored="primary"
+            (click)="encode(text)"
+            float-center
+            class="mdl-cell mdl-cell--12-col"
+            >
+      2FA Code
+    </button>
 
-    </form>
+    <hr>
+      <ul style="list-style-type: none; margin: 0; padding-left: 1em; display: inline-block; float:left;" class="mdl-cell mdl-cell--12-col">
+        <li>
+          <mdl-switch [(ngModel)]="keyFetch" name="keyFetch" id="switch-1" class="mdl-switch__input" (click)="queryKey()">
+            <span class="mdl-switch__label">Display key</span>
+          </mdl-switch>
+        </li>
+        <li *ngIf="!!keyFetch && !!keyResponse">
+            <span>Key: {{key().Key}}</span>
+            <br>
+            <span>Status: {{key().Status}}</span>
+        </li>
+        <li *ngIf="!keyFetch || !keyResponse">
+            <span>Key: </span>
+            <br>
+            <span>Status:</span>
+        </li>
+      </ul>
+      <br>
+      <hr>
+
     <div class="mdl-cell mdl-cell--6-col">
       <img class="avatar" src="{{image}}">
       <ul style="list-style-type: none; margin: 0; padding: 0; display: inline-block; float:right;" >

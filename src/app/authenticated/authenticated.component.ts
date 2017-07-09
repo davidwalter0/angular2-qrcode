@@ -13,15 +13,19 @@ import { AngularFireAuth } from "angularfire2/angularfire2";
 import { AuthGuard } from '../auth.service';
 
 import { environment } from '../../environments/environment';
-import { ValidationService } from './validation.service';
+
 import { JsonResponse } from './json.response';
+import { KeyResponse } from './key.response';
+
+import { ValidationService } from './validation.service';
+import { KeyService } from './key.service';
 
 @Component({
   selector: 'authenticated',
   styleUrls: [
     'authenticated.component.css',
   ],
-  templateUrl: 'authenticated.component.html'
+  templateUrl: 'authenticated.component.html',
 })
 
 export class AuthenticatedComponent implements OnInit {
@@ -38,8 +42,10 @@ export class AuthenticatedComponent implements OnInit {
   validated: boolean = false;
   validationURL: string = "";
   validationResponse: JsonResponse;
+  keyResponse: KeyResponse;
+  keyFetch: boolean = false;
 
-  token: string = ""
+  token: string = "";
   PROTOCOL: string = "https";
   url: string = `${this.PROTOCOL}://${this.host}:${this.port}/?data=`;
   default_url: string = "${this.PROTOCOL}://localhost:8081/?data=";
@@ -52,11 +58,12 @@ export class AuthenticatedComponent implements OnInit {
   qrQuery: string = "";
   qrcode: any;
 
-  userInfo: boolean = true;
+  userinfo: boolean = true;
 
   constructor(public authguard: AuthGuard,
     private http: Http,
-    private validationService: ValidationService) {
+    private validationService: ValidationService,
+    private keyService: KeyService) {
     console.log(authguard);
     if (this.testing) {
       this.issuer = "example.com";
@@ -71,25 +78,23 @@ export class AuthenticatedComponent implements OnInit {
     if (!this.https) {
       this.PROTOCOL = "http";
     }
-  }
-
-  public ngOnInit() {
-    if (!this.https) {
-      this.PROTOCOL = "http";
-    }
 
     this.url = `${this.PROTOCOL}://${this.host}:${this.port}`;
     this.default_url = "${this.PROTOCOL}://localhost:8081";
-
     if (this.host == undefined || this.port == undefined) {
       this.url = this.default_url;
     }
-    console.log("Url: ", this.url);
+    let text: string = `${this.url}/?account=${this.account}&issuer=${this.issuer}`;
+    console.log(text);
+    this.qrQuery = text;
+  }
+
+  public ngOnInit() {
   }
 
   public encode() {
     let text: string = `${this.url}/?account=${this.account}&issuer=${this.issuer}`;
-    console.log(text)
+    console.log(text);
     this.qrQuery = text;
   }
 
@@ -109,11 +114,42 @@ export class AuthenticatedComponent implements OnInit {
         Issuer: "example.com",
         Token: "123456",
         Status: "Successfully validated code",
-      }
+      };
     } else {
       this.validationService.validate(url).subscribe(
-        response => this.validationResponse = response
+        response => {
+          this.validationResponse = response;
+        }
       );
+    }
+  }
+
+  private queryKey() {
+    let url: string = `${this.url}/key/?account=${this.account}&issuer=${this.issuer}`;
+    console.log("key url", url);
+    if (this.testing) {
+      this.keyResponse = <KeyResponse>{
+        Key: "uid@example.com",
+        Status: "Successfully validated code",
+      };
+    } else {
+      this.keyService.key(url).subscribe(
+        keyResponse => {
+          this.keyResponse = <KeyResponse>keyResponse;
+          console.log("keyResponse", this.keyResponse);
+        }
+      );
+    }
+  }
+
+  public key(): KeyResponse {
+    if (this.keyResponse == null) {
+      return <KeyResponse>{
+        Key: "",
+        Status: "",
+      };
+    } else {
+      return this.keyResponse;
     }
   }
 }

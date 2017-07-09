@@ -9,15 +9,15 @@ import { JsonResponse } from './json.response';
 import { KeyResponse } from './key.response';
 
 @Injectable()
-export class ValidationService {
+export class KeyService {
 
   constructor(public http: Http) { }
 
-  public validate(url: string): Observable<JsonResponse> {
-    console.log("validate:", url)
+  public key(url: string): Observable<KeyResponse> {
+    console.log("key:", url)
     return this.http.get(`${url}`)
       .map(res => {
-        return res.json();
+        return <KeyResponse>res.json();
       })
       .catch(this.handleError);
   }
@@ -36,4 +36,3 @@ export class ValidationService {
     return Observable.throw(errorMessage);
   }
 }
-

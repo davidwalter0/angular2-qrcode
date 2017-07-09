@@ -18,8 +18,9 @@ import { firebaseConfigCredentials } from './firebase.credentials';
 import { AuthGuard } from './auth.service';
 import { EmptyComponent } from './empty/empty.component';
 import { AuthenticatedComponent } from './authenticated/authenticated.component';
-import { ValidationService } from './authenticated/validation.service';
 
+import { ValidationService } from './authenticated/validation.service';
+import { KeyService } from './authenticated/key.service';
 
 @NgModule({
   declarations: [
@@ -40,10 +41,11 @@ import { ValidationService } from './authenticated/validation.service';
     routes,
   ],
   providers: [
+    ValidationService,
+    KeyService,
     AuthGuard,
     Location, { provide: LocationStrategy, useClass: PathLocationStrategy },
-    ValidationService,
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
 export class AppModule { }

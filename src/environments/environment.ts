@@ -6,7 +6,7 @@
 
 export const environment = {
   production: false,
-  TESTING: true,
+  TESTING: false,
   // required HTTP attribute, disable TLS by turning it off
   HTTPS: true,
   // if using tls/https, the hostname must match certs or you'll fight
